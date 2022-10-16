@@ -2,7 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class MobTimer extends StatefulWidget {
-  const MobTimer({super.key});
+  MobTimer({super.key, required this.onStopped});
+
+  Function() onStopped;
 
   @override
   State<MobTimer> createState() => _MobTimerState();
@@ -23,6 +25,7 @@ class _MobTimerState extends State<MobTimer> {
       setState(() {
         if (_secondsRemaining < 1) {
           timer.cancel();
+          widget.onStopped();
         } else {
           _secondsRemaining -= 1;
         }

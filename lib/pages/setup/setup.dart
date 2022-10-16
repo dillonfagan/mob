@@ -21,7 +21,7 @@ class _SetupPageState extends State<SetupPage> {
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                 builder: ((context) {
-                  return const TimerPage();
+                  return TimerPage();
                 }),
               ));
             },

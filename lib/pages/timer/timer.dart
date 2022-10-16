@@ -3,13 +3,18 @@ import 'package:mob_app/pages/setup/setup.dart';
 import 'package:mob_app/pages/timer/widgets/mob_timer.dart';
 
 class TimerPage extends StatefulWidget {
-  const TimerPage({super.key});
+  TimerPage({super.key});
+
+  final List<String> mobbers = ['Mobber 1', 'Mobber 2'];
 
   @override
   State<TimerPage> createState() => _TimerPageState();
 }
 
 class _TimerPageState extends State<TimerPage> {
+  bool _isCounting = true;
+  int mobberIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,17 +35,26 @@ class _TimerPageState extends State<TimerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const MobTimer(),
-            const Text(
-              'Dillon',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 36),
+            MobTimer(
+              onStopped: () {
+                setState(() => _isCounting = false);
+              },
             ),
-            ElevatedButton.icon(
-              onPressed: () {},
-              icon: const Icon(Icons.arrow_right),
-              label: const Text('Next'),
-            ),
+            const SizedBox(height: 16),
+            _isCounting
+                ? Text(
+                    widget.mobbers[mobberIndex],
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 36),
+                  )
+                : ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.arrow_forward),
+                    label: Text(
+                      widget.mobbers[mobberIndex + 1],
+                      style: const TextStyle(fontSize: 32),
+                    ),
+                  ),
           ],
         ),
       ),
