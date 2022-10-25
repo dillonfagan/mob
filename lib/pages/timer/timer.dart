@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mob_app/common/log.dart';
+import 'package:mob_app/models/mobber.dart';
 import 'package:mob_app/pages/setup/setup.dart';
 import 'package:mob_app/pages/timer/widgets/display.dart';
 import 'package:mob_app/providers/mob.dart';
@@ -16,9 +17,9 @@ class TimerPage extends StatefulWidget {
 }
 
 class _TimerPageState extends State<TimerPage> {
-  late int secondsRemaining;
-  late Timer timer;
-  late List<String> mobbers;
+  late int _secondsRemaining;
+  late Timer _timer;
+  late List<Mobber> _mobbers;
 
   int _mobberIndex = 0;
   bool _isCounting = true;
@@ -31,22 +32,29 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   void dispose() {
-    timer.cancel();
+    _timer.cancel();
     super.dispose();
   }
 
   void _start() {
-    secondsRemaining = widget.seconds;
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      debug('Seconds Remaining: $secondsRemaining');
+    _secondsRemaining = widget.seconds;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      debug('Seconds Remaining: $_secondsRemaining');
       setState(() {
-        if (secondsRemaining < 1) {
-          timer.cancel();
-          setState(() => _isCounting = false);
+        if (_secondsRemaining < 1) {
+          _stop();
         } else {
-          secondsRemaining -= 1;
+          _secondsRemaining -= 1;
         }
       });
+    });
+  }
+
+  void _stop() {
+    _timer.cancel();
+    setState(() {
+      _secondsRemaining = 0;
+      _isCounting = false;
     });
   }
 
@@ -59,7 +67,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   int get _nextMobberIndex {
-    if (_mobberIndex == mobbers.length - 1) {
+    if (_mobberIndex == _mobbers.length - 1) {
       return 0;
     }
 
@@ -69,7 +77,7 @@ class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     final mob = Provider.of<MobProvider>(context);
-    final mobbers = mob.mobbers;
+    _mobbers = mob.mobbers;
 
     return Scaffold(
       appBar: AppBar(
@@ -82,6 +90,12 @@ class _TimerPageState extends State<TimerPage> {
           )),
           icon: const Icon(Icons.close_rounded),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => _stop(),
+            icon: const Icon(Icons.start),
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -89,11 +103,11 @@ class _TimerPageState extends State<TimerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TimerDisplay(seconds: secondsRemaining),
+            TimerDisplay(seconds: _secondsRemaining),
             const SizedBox(height: 16),
             _isCounting
                 ? Text(
-                    mobbers[_mobberIndex].name,
+                    _mobbers[_mobberIndex].name,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 36),
                   )
@@ -101,7 +115,7 @@ class _TimerPageState extends State<TimerPage> {
                     onPressed: () => _nextMobber(),
                     icon: const Icon(Icons.arrow_forward),
                     label: Text(
-                      mobbers[_nextMobberIndex].name,
+                      _mobbers[_nextMobberIndex].name,
                       style: const TextStyle(fontSize: 32),
                     ),
                   ),
