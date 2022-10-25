@@ -36,16 +36,19 @@ class _SetupPageState extends State<SetupPage> {
           );
         }),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: ((context) {
-              return const TimerPage();
-            }),
-          ));
-        },
-        backgroundColor: Colors.amber,
-        child: const Icon(Icons.timer_outlined),
+      floatingActionButton: Visibility(
+        visible: mobbers.isNotEmpty,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: ((context) {
+                return const TimerPage();
+              }),
+            ));
+          },
+          backgroundColor: Colors.amber,
+          child: const Icon(Icons.timer_outlined),
+        ),
       ),
     );
   }
