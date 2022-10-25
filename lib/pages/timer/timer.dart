@@ -43,6 +43,22 @@ class _TimerPageState extends State<TimerPage> {
     });
   }
 
+  void _nextMobber() {
+    _start();
+    setState(() {
+      _mobberIndex = _nextMobberIndex;
+      _isCounting = true;
+    });
+  }
+
+  int get _nextMobberIndex {
+    if (_mobberIndex == widget.mobbers.length - 1) {
+      return 0;
+    }
+
+    return _mobberIndex + 1;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,16 +88,10 @@ class _TimerPageState extends State<TimerPage> {
                     style: const TextStyle(fontSize: 36),
                   )
                 : ElevatedButton.icon(
-                    onPressed: () {
-                      _start();
-                      setState(() {
-                        _mobberIndex++;
-                        _isCounting = true;
-                      });
-                    },
+                    onPressed: () => _nextMobber(),
                     icon: const Icon(Icons.arrow_forward),
                     label: Text(
-                      widget.mobbers[_mobberIndex + 1],
+                      widget.mobbers[_nextMobberIndex],
                       style: const TextStyle(fontSize: 32),
                     ),
                   ),
