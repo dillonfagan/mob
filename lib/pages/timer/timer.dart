@@ -28,6 +28,12 @@ class _TimerPageState extends State<TimerPage> {
     _start();
   }
 
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
   void _start() {
     secondsRemaining = startingSeconds;
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -70,7 +76,7 @@ class _TimerPageState extends State<TimerPage> {
               Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (_) => const SetupPage(),
           )),
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.close_rounded),
         ),
       ),
       body: Center(

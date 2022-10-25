@@ -13,21 +13,50 @@ class SetupPage extends StatefulWidget {
 class _SetupPageState extends State<SetupPage> {
   @override
   Widget build(BuildContext context) {
+    final mobbers = ['Mobber 1', 'Mobber 2', 'Mobber 3'];
+
     return Scaffold(
-      body: Center(
-        child: Center(
-          child: IconButton(
-            icon: const Icon(Icons.start),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: ((context) {
-                  return TimerPage();
-                }),
-              ));
-            },
-          ),
-        ),
+      body: ListView.builder(
+        itemCount: mobbers.length,
+        itemBuilder: ((context, index) {
+          return Card(
+            child: ListTile(
+              title: Text(mobbers[index]),
+              trailing: IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.close_rounded),
+              ),
+            ),
+          );
+        }),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: ((context) {
+              return TimerPage();
+            }),
+          ));
+        },
+        backgroundColor: Colors.amber,
+        child: const Icon(Icons.play_arrow),
       ),
     );
+    // return Scaffold(
+    //   body: Center(
+    //     child: Center(
+    //       child: IconButton(
+    //         icon: const Icon(Icons.start),
+    //         onPressed: () {
+    //           Navigator.of(context).push(MaterialPageRoute(
+    //             builder: ((context) {
+    //               return TimerPage();
+    //             }),
+    //           ));
+    //         },
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
