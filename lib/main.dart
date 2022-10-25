@@ -16,6 +16,7 @@ class MobApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           title: 'Mob Timer',
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
             brightness: Brightness.dark,
             colorScheme: const ColorScheme.dark(primary: Colors.amber),
