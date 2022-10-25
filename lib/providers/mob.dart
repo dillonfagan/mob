@@ -5,6 +5,10 @@ class MobProvider extends ChangeNotifier {
   List<Mobber> _mobbers = [];
 
   int get turnLength {
+    if (_mobbers.isEmpty) {
+      return 0;
+    }
+
     if (_mobbers.length == 1) {
       return 900;
     }
