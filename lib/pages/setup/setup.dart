@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:mob_app/models/mobber.dart';
 import 'package:mob_app/pages/timer/timer.dart';
@@ -22,42 +24,51 @@ class _SetupPageState extends State<SetupPage> {
     final mobbers = mob.mobbers;
 
     return Scaffold(
-      body: Column(
-        children: [
-          Card(
-            child: TextField(
-              controller: mobberController,
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), hintText: 'Add a mobber...'),
-              onSubmitted: (value) {
-                mobberController.clear();
-                mobbers.add(Mobber(name: value));
-                mob.mobbers = mobbers;
-              },
-            ),
+      body: Center(
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: min(MediaQuery.of(context).size.width, 500),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: mobbers.length,
-              itemBuilder: ((context, index) {
-                return Card(
-                  child: ListTile(
-                    title: Text(mobbers[index].name),
-                    trailing: IconButton(
-                      onPressed: () {
-                        mobbers.removeAt(index);
-
-                        mob.mobbers = mobbers;
-                      },
-                      icon: const Icon(Icons.close_rounded),
-                    ),
+          child: Column(
+            children: [
+              const SizedBox(height: 32),
+              Card(
+                child: TextField(
+                  controller: mobberController,
+                  textAlign: TextAlign.center,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Add a mobber...',
                   ),
-                );
-              }),
-            ),
+                  onSubmitted: (value) {
+                    mobberController.clear();
+                    mobbers.add(Mobber(name: value));
+                    mob.mobbers = mobbers;
+                  },
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: mobbers.length,
+                  itemBuilder: ((context, index) {
+                    return Card(
+                      child: ListTile(
+                        title: Text(mobbers[index].name),
+                        trailing: IconButton(
+                          onPressed: () {
+                            mobbers.removeAt(index);
+                            mob.mobbers = mobbers;
+                          },
+                          icon: const Icon(Icons.close_rounded),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
       floatingActionButton: Visibility(
         visible: mobbers.isNotEmpty,
