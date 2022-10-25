@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:mob_app/common/log.dart';
 import 'package:mob_app/pages/setup/setup.dart';
 import 'package:mob_app/pages/timer/widgets/display.dart';
+import 'package:mob_app/providers/mob.dart';
+import 'package:provider/provider.dart';
 
 class TimerPage extends StatefulWidget {
-  TimerPage({super.key});
-
-  final List<String> mobbers = ['Mobber 1', 'Mobber 2', 'Mobber 3'];
+  const TimerPage({super.key});
 
   @override
   State<TimerPage> createState() => _TimerPageState();
@@ -18,6 +18,7 @@ class _TimerPageState extends State<TimerPage> {
 
   late int secondsRemaining;
   late Timer timer;
+  late List<String> mobbers;
 
   int _mobberIndex = 0;
   bool _isCounting = true;
@@ -58,7 +59,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   int get _nextMobberIndex {
-    if (_mobberIndex == widget.mobbers.length - 1) {
+    if (_mobberIndex == mobbers.length - 1) {
       return 0;
     }
 
@@ -67,6 +68,9 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
+    mobbers =
+        Provider.of<MobProvider>(context).mobbers.map((m) => m.name).toList();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -89,7 +93,7 @@ class _TimerPageState extends State<TimerPage> {
             const SizedBox(height: 16),
             _isCounting
                 ? Text(
-                    widget.mobbers[_mobberIndex],
+                    mobbers[_mobberIndex],
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 36),
                   )
@@ -97,7 +101,7 @@ class _TimerPageState extends State<TimerPage> {
                     onPressed: () => _nextMobber(),
                     icon: const Icon(Icons.arrow_forward),
                     label: Text(
-                      widget.mobbers[_nextMobberIndex],
+                      mobbers[_nextMobberIndex],
                       style: const TextStyle(fontSize: 32),
                     ),
                   ),
