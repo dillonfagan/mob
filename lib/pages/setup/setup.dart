@@ -42,21 +42,5 @@ class _SetupPageState extends State<SetupPage> {
         child: const Icon(Icons.play_arrow),
       ),
     );
-    // return Scaffold(
-    //   body: Center(
-    //     child: Center(
-    //       child: IconButton(
-    //         icon: const Icon(Icons.start),
-    //         onPressed: () {
-    //           Navigator.of(context).push(MaterialPageRoute(
-    //             builder: ((context) {
-    //               return TimerPage();
-    //             }),
-    //           ));
-    //         },
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 }
