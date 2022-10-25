@@ -11,9 +11,10 @@ class MobApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Mob Timer',
       theme: ThemeData(
         brightness: Brightness.dark,
+        colorScheme: const ColorScheme.dark(primary: Colors.amber),
       ),
       home: const SetupPage(),
     );
