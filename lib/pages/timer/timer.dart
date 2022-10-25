@@ -7,15 +7,15 @@ import 'package:mob_app/providers/mob.dart';
 import 'package:provider/provider.dart';
 
 class TimerPage extends StatefulWidget {
-  const TimerPage({super.key});
+  const TimerPage({super.key, this.seconds = 5});
+
+  final int seconds;
 
   @override
   State<TimerPage> createState() => _TimerPageState();
 }
 
 class _TimerPageState extends State<TimerPage> {
-  final int startingSeconds = 5;
-
   late int secondsRemaining;
   late Timer timer;
   late List<String> mobbers;
@@ -36,7 +36,7 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   void _start() {
-    secondsRemaining = startingSeconds;
+    secondsRemaining = widget.seconds;
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       debug('Seconds Remaining: $secondsRemaining');
       setState(() {
@@ -68,8 +68,8 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
-    mobbers =
-        Provider.of<MobProvider>(context).mobbers.map((m) => m.name).toList();
+    final mob = Provider.of<MobProvider>(context);
+    final mobbers = mob.mobbers;
 
     return Scaffold(
       appBar: AppBar(
@@ -93,7 +93,7 @@ class _TimerPageState extends State<TimerPage> {
             const SizedBox(height: 16),
             _isCounting
                 ? Text(
-                    mobbers[_mobberIndex],
+                    mobbers[_mobberIndex].name,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 36),
                   )
@@ -101,7 +101,7 @@ class _TimerPageState extends State<TimerPage> {
                     onPressed: () => _nextMobber(),
                     icon: const Icon(Icons.arrow_forward),
                     label: Text(
-                      mobbers[_nextMobberIndex],
+                      mobbers[_nextMobberIndex].name,
                       style: const TextStyle(fontSize: 32),
                     ),
                   ),

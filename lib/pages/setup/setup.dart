@@ -22,6 +22,7 @@ class _SetupPageState extends State<SetupPage> {
   Widget build(BuildContext context) {
     final mob = Provider.of<MobProvider>(context);
     final mobbers = mob.mobbers;
+    final turnLength = mob.turnLength;
 
     return Scaffold(
       body: Center(
@@ -75,7 +76,7 @@ class _SetupPageState extends State<SetupPage> {
         child: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: ((context) => const TimerPage()),
+              builder: ((context) => TimerPage(seconds: turnLength)),
             ));
           },
           backgroundColor: Colors.amber,
