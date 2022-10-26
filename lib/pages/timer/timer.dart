@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mob_app/common/log.dart';
 import 'package:mob_app/models/mobber.dart';
 import 'package:mob_app/pages/setup/setup.dart';
-import 'package:mob_app/pages/timer/widgets/display.dart';
+import 'package:mob_app/pages/timer/widgets/control.dart';
 import 'package:mob_app/providers/mob.dart';
 import 'package:provider/provider.dart';
 
@@ -98,28 +98,12 @@ class _TimerPageState extends State<TimerPage> {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TimerDisplay(seconds: _secondsRemaining),
-            const SizedBox(height: 16),
-            _isCounting
-                ? Text(
-                    _mobbers[_mobberIndex].name,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 36),
-                  )
-                : ElevatedButton.icon(
-                    onPressed: () => _nextMobber(),
-                    icon: const Icon(Icons.arrow_forward),
-                    label: Text(
-                      _mobbers[_nextMobberIndex].name,
-                      style: const TextStyle(fontSize: 32),
-                    ),
-                  ),
-          ],
+        child: Control(
+          seconds: _secondsRemaining,
+          isCounting: _isCounting,
+          title: _mobbers[_mobberIndex].name,
+          nextTitle: _mobbers[_nextMobberIndex].name,
+          onNextPressed: _nextMobber,
         ),
       ),
     );
