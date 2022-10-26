@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mob_app/common/log.dart';
 import 'package:mob_app/models/mobber.dart';
-import 'package:mob_app/pages/setup/setup.dart';
+import 'package:mob_app/pages/timer/widgets/appbar.dart';
 import 'package:mob_app/pages/timer/widgets/control.dart';
 import 'package:mob_app/providers/mob.dart';
 import 'package:provider/provider.dart';
@@ -80,22 +80,9 @@ class _TimerPageState extends State<TimerPage> {
     _mobbers = mob.mobbers;
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () =>
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (_) => const SetupPage(),
-          )),
-          icon: const Icon(Icons.close_rounded),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () => _stop(),
-            icon: const Icon(Icons.start),
-          ),
-        ],
+      appBar: TimerAppBar(
+        context: context,
+        onSkipPressed: _stop,
       ),
       body: Center(
         child: Control(
