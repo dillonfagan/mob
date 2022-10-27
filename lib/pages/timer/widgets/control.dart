@@ -40,7 +40,7 @@ class Control extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                   child: Text(
                     nextTitle,
-                    style: const TextStyle(fontSize: 32),
+                    style: const TextStyle(fontSize: 36),
                   ),
                 ),
                 style: ElevatedButton.styleFrom(shape: const StadiumBorder()),
