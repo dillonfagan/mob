@@ -30,9 +30,9 @@ class _SetupPageState extends State<SetupPage> {
           constraints: BoxConstraints(
             maxWidth: min(MediaQuery.of(context).size.width, 500),
           ),
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              const SizedBox(height: 32),
               Card(
                 child: TextField(
                   controller: mobberController,
@@ -80,7 +80,10 @@ class _SetupPageState extends State<SetupPage> {
             ));
           },
           backgroundColor: Colors.amber,
-          child: const Icon(Icons.timer_outlined),
+          child: const Icon(
+            Icons.play_circle_rounded,
+            size: 32,
+          ),
         ),
       ),
     );

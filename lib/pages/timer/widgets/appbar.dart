@@ -15,11 +15,5 @@ AppBar TimerAppBar({
       )),
       icon: const Icon(Icons.close_rounded),
     ),
-    actions: [
-      IconButton(
-        onPressed: onSkipPressed,
-        icon: const Icon(Icons.start),
-      ),
-    ],
   );
 }

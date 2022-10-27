@@ -80,19 +80,29 @@ class _TimerPageState extends State<TimerPage> {
     _mobbers = mob.mobbers;
 
     return Scaffold(
-      appBar: TimerAppBar(
-        context: context,
-        onSkipPressed: _stop,
-      ),
-      body: Center(
-        child: Control(
-          seconds: _secondsRemaining,
-          isCounting: _isCounting,
-          title: _mobbers[_mobberIndex].name,
-          nextTitle: _mobbers[_nextMobberIndex].name,
-          onNextPressed: _nextMobber,
+        appBar: TimerAppBar(
+          context: context,
+          onSkipPressed: _stop,
         ),
-      ),
-    );
+        body: Center(
+          child: Control(
+            seconds: _secondsRemaining,
+            isCounting: _isCounting,
+            title: _mobbers[_mobberIndex].name,
+            nextTitle: _mobbers[_nextMobberIndex].name,
+            onNextPressed: _nextMobber,
+          ),
+        ),
+        floatingActionButton: Visibility(
+          visible: _isCounting,
+          child: FloatingActionButton(
+            onPressed: _stop,
+            backgroundColor: Colors.amber,
+            child: const Icon(
+              Icons.skip_next_rounded,
+              size: 32,
+            ),
+          ),
+        ));
   }
 }
