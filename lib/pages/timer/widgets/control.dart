@@ -35,7 +35,10 @@ class Control extends StatelessWidget {
               )
             : ElevatedButton.icon(
                 onPressed: onNextPressed,
-                icon: const Icon(Icons.arrow_forward),
+                icon: const Icon(
+                  Icons.arrow_forward,
+                  size: 36,
+                ),
                 label: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
                   child: Text(
