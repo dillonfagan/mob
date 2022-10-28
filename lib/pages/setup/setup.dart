@@ -54,7 +54,10 @@ class _SetupPageState extends State<SetupPage> {
                   itemBuilder: ((context, index) {
                     return Card(
                       child: ListTile(
-                        title: Text(mobbers[index].name),
+                        title: Text(
+                          mobbers[index].name,
+                          style: const TextStyle(fontSize: 24),
+                        ),
                         trailing: IconButton(
                           onPressed: () {
                             mobbers.removeAt(index);
