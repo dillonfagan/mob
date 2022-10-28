@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mob_app/common/log.dart';
-import 'package:mob_app/models/mobber.dart';
 import 'package:mob_app/pages/timer/widgets/appbar.dart';
 import 'package:mob_app/pages/timer/widgets/control.dart';
 import 'package:mob_app/providers/mob.dart';
@@ -19,7 +18,6 @@ class TimerPage extends StatefulWidget {
 class _TimerPageState extends State<TimerPage> {
   late int _secondsRemaining;
   late Timer _timer;
-  late List<Mobber> _mobbers;
 
   int _mobberIndex = 0;
   bool _isCounting = true;
@@ -58,16 +56,16 @@ class _TimerPageState extends State<TimerPage> {
     });
   }
 
-  void _nextMobber() {
+  void _nextMobber(int nextMobberIndex) {
     _start();
     setState(() {
-      _mobberIndex = _nextMobberIndex;
+      _mobberIndex = nextMobberIndex;
       _isCounting = true;
     });
   }
 
-  int get _nextMobberIndex {
-    if (_mobberIndex == _mobbers.length - 1) {
+  int _getNextMobberIndex(numMobbers) {
+    if (_mobberIndex == numMobbers - 1) {
       return 0;
     }
 
@@ -77,20 +75,20 @@ class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     final mob = Provider.of<MobProvider>(context);
-    _mobbers = mob.mobbers;
+    final mobbers = mob.mobbers;
+    final nextMobberIndex = _getNextMobberIndex(mobbers.length);
+    final currentMobber = mobbers[_mobberIndex];
+    final nextMobber = mobbers[nextMobberIndex];
 
     return Scaffold(
-        appBar: TimerAppBar(
-          context: context,
-          onSkipPressed: _stop,
-        ),
+        appBar: TimerAppBar(context: context),
         body: Center(
           child: Control(
             seconds: _secondsRemaining,
             isCounting: _isCounting,
-            title: _mobbers[_mobberIndex].name,
-            nextTitle: _mobbers[_nextMobberIndex].name,
-            onNextPressed: _nextMobber,
+            title: currentMobber.name,
+            nextTitle: nextMobber.name,
+            onNextPressed: () => _nextMobber(nextMobberIndex),
           ),
         ),
         floatingActionButton: Visibility(
