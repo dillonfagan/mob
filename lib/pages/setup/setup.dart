@@ -81,8 +81,8 @@ class _SetupPageState extends State<SetupPage> {
           },
           backgroundColor: Colors.amber,
           child: const Icon(
-            Icons.play_circle_rounded,
-            size: 32,
+            Icons.play_arrow_rounded,
+            size: 36,
           ),
         ),
       ),

@@ -19,7 +19,6 @@ class _TimerPageState extends State<TimerPage> {
   late int _secondsRemaining;
   late Timer _timer;
 
-  int _mobberIndex = 0;
   bool _isCounting = true;
 
   @override
@@ -56,29 +55,16 @@ class _TimerPageState extends State<TimerPage> {
     });
   }
 
-  void _nextMobber(int nextMobberIndex) {
+  void _nextMobber() {
     _start();
-    setState(() {
-      _mobberIndex = nextMobberIndex;
-      _isCounting = true;
-    });
-  }
-
-  int _getNextMobberIndex(numMobbers) {
-    if (_mobberIndex == numMobbers - 1) {
-      return 0;
-    }
-
-    return _mobberIndex + 1;
+    setState(() => _isCounting = true);
   }
 
   @override
   Widget build(BuildContext context) {
     final mob = Provider.of<MobProvider>(context);
-    final mobbers = mob.mobbers;
-    final nextMobberIndex = _getNextMobberIndex(mobbers.length);
-    final currentMobber = mobbers[_mobberIndex];
-    final nextMobber = mobbers[nextMobberIndex];
+    final currentMobber = mob.currentMobber;
+    final nextMobber = mob.nextMobber;
 
     return Scaffold(
         appBar: TimerAppBar(context: context),
@@ -88,7 +74,7 @@ class _TimerPageState extends State<TimerPage> {
             isCounting: _isCounting,
             title: currentMobber.name,
             nextTitle: nextMobber.name,
-            onNextPressed: () => _nextMobber(nextMobberIndex),
+            onNextPressed: _nextMobber,
           ),
         ),
         floatingActionButton: Visibility(
@@ -98,7 +84,7 @@ class _TimerPageState extends State<TimerPage> {
             backgroundColor: Colors.amber,
             child: const Icon(
               Icons.skip_next_rounded,
-              size: 32,
+              size: 36,
             ),
           ),
         ));

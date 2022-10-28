@@ -3,6 +3,7 @@ import 'package:mob_app/models/mobber.dart';
 
 class MobProvider extends ChangeNotifier {
   List<Mobber> _mobbers = [];
+  int _currentMobberIndex = 0;
 
   int get turnLength {
     if (_mobbers.isEmpty) {
@@ -20,7 +21,24 @@ class MobProvider extends ChangeNotifier {
     return 420;
   }
 
+  Mobber get currentMobber => _mobbers[_currentMobberIndex];
+
+  Mobber get nextMobber => _mobbers[_nextMobberIndex];
+
   List<Mobber> get mobbers => _mobbers;
+
+  void advanceTurn() {
+    _currentMobberIndex = _nextMobberIndex;
+    notifyListeners();
+  }
+
+  int get _nextMobberIndex {
+    if (_currentMobberIndex == _mobbers.length - 1) {
+      return 0;
+    }
+
+    return _currentMobberIndex + 1;
+  }
 
   set mobbers(List<Mobber> newMobbers) {
     _mobbers = newMobbers;
