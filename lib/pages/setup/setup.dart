@@ -42,6 +42,7 @@ class _SetupPageState extends State<SetupPage> {
                     hintText: 'Add a mobber...',
                   ),
                   onSubmitted: (value) {
+                    if (value.isEmpty) return;
                     mobberController.clear();
                     mobbers.add(Mobber(name: value));
                     mob.mobbers = mobbers;
