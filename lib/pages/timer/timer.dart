@@ -1,6 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mob_app/common/log.dart';
+import 'package:mob_app/pages/timer/helpers/ticker.dart';
 import 'package:mob_app/providers/mob.dart';
 import 'package:provider/provider.dart';
 
@@ -18,10 +17,7 @@ class TimerPage extends StatefulWidget {
 }
 
 class _TimerPageState extends State<TimerPage> {
-  late int _secondsRemaining;
-  late Timer _timer;
-
-  bool _isCounting = true;
+  late final _ticker = Ticker(onTick: _update);
 
   @override
   void initState() {
@@ -31,35 +27,24 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _ticker.stop();
     super.dispose();
   }
 
+  void _update() {
+    setState(() {});
+  }
+
   void _start() {
-    _secondsRemaining = widget.seconds;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      debug('Seconds Remaining: $_secondsRemaining');
-      setState(() {
-        if (_secondsRemaining < 1) {
-          _stop();
-        } else {
-          _secondsRemaining -= 1;
-        }
-      });
+    setState(() {
+      _ticker.start(widget.seconds);
     });
   }
 
   void _stop() {
-    _timer.cancel();
     setState(() {
-      _secondsRemaining = 0;
-      _isCounting = false;
+      _ticker.stop();
     });
-  }
-
-  void _nextMobber() {
-    _start();
-    setState(() => _isCounting = true);
   }
 
   @override
@@ -77,9 +62,9 @@ class _TimerPageState extends State<TimerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TimerDisplay(seconds: _secondsRemaining),
+            TimerDisplay(seconds: _ticker.secondsRemaining),
             const SizedBox(height: 16),
-            _isCounting
+            _ticker.isActive
                 ? Text(
                     title,
                     textAlign: TextAlign.center,
@@ -89,14 +74,14 @@ class _TimerPageState extends State<TimerPage> {
                     labelText: nextMobber.name,
                     onPressed: () {
                       mob.advanceTurn();
-                      _nextMobber();
+                      _start();
                     },
                   ),
           ],
         ),
       ),
       floatingActionButton: Visibility(
-        visible: _isCounting,
+        visible: _ticker.isActive,
         child: FloatingActionButton(
           onPressed: _stop,
           backgroundColor: Colors.amber,
