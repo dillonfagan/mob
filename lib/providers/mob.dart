@@ -4,6 +4,9 @@ import 'package:mob_app/models/mobber.dart';
 class MobProvider extends ChangeNotifier {
   List<Mobber> _mobbers = [];
   int _currentMobberIndex = 0;
+  int _turns = 0;
+
+  int get turns => _turns;
 
   int get turnLength {
     if (_mobbers.isEmpty) {
@@ -28,6 +31,7 @@ class MobProvider extends ChangeNotifier {
   List<Mobber> get mobbers => _mobbers;
 
   void advanceTurn() {
+    _turns++;
     _currentMobberIndex = _nextMobberIndex;
     notifyListeners();
   }
