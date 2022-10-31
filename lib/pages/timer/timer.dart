@@ -4,6 +4,7 @@ import 'package:mob_app/providers/mob.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/appbar.dart';
+import 'widgets/break_button.dart';
 import 'widgets/display.dart';
 import 'widgets/next_button.dart';
 
@@ -35,16 +36,12 @@ class _TimerPageState extends State<TimerPage> {
     setState(() {});
   }
 
-  void _start() {
-    setState(() {
-      _ticker.start(widget.seconds);
-    });
+  void _start({int? seconds}) {
+    setState(() => _ticker.start(seconds ?? widget.seconds));
   }
 
   void _stop() {
-    setState(() {
-      _ticker.stop();
-    });
+    setState(() => _ticker.stop());
   }
 
   @override
@@ -52,7 +49,7 @@ class _TimerPageState extends State<TimerPage> {
     final mob = Provider.of<MobProvider>(context);
     final currentMobber = mob.currentMobber;
     final nextMobber = mob.nextMobber;
-    String title = currentMobber.name;
+    String title = mob.isOnBreak ? 'Break' : currentMobber.name;
 
     return Scaffold(
       appBar: TimerAppBar(context: context),
@@ -70,20 +67,32 @@ class _TimerPageState extends State<TimerPage> {
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 36),
                   )
-                : NextButton(
-                    labelText: nextMobber.name,
-                    onPressed: () {
-                      mob.advanceTurn();
-                      _start();
-                    },
-                  ),
+                : mob.isTimeForBreak
+                    ? BreakButton(
+                        onPressed: () {
+                          mob.state = MobState.onBreak;
+                          mob.resetTurns();
+                          _start(seconds: 600);
+                        },
+                      )
+                    : NextButton(
+                        labelText: nextMobber.name,
+                        onPressed: () {
+                          mob.state = MobState.mobbing;
+                          mob.advanceTurn();
+                          _start();
+                        },
+                      ),
           ],
         ),
       ),
       floatingActionButton: Visibility(
         visible: _ticker.isActive,
         child: FloatingActionButton(
-          onPressed: _stop,
+          onPressed: () {
+            _stop();
+            mob.state = MobState.waiting;
+          },
           backgroundColor: Colors.amber,
           child: const Icon(
             Icons.skip_next_rounded,
