@@ -1,12 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:mob_app/common/log.dart';
 import 'package:mob_app/models/mobber.dart';
+
+const int fortyFiveMinutes = 2700;
+
+enum MobState {
+  mobbing,
+  waiting,
+  onBreak,
+}
 
 class MobProvider extends ChangeNotifier {
   List<Mobber> _mobbers = [];
   int _currentMobberIndex = 0;
   int _turns = 0;
 
+  MobState _state = MobState.waiting;
+
+  MobState get state => _state;
+
+  set state(MobState value) {
+    _state = value;
+    if (value == MobState.onBreak) {
+      _turns = 0;
+      debug('Turns reset');
+    }
+
+    debug('State set to [$value]');
+  }
+
   int get turns => _turns;
+
+  bool get isOnBreak => state == MobState.onBreak;
 
   int get turnLength {
     if (_mobbers.isEmpty) {
@@ -33,6 +58,7 @@ class MobProvider extends ChangeNotifier {
   void advanceTurn() {
     _turns++;
     _currentMobberIndex = _nextMobberIndex;
+    debug('Turns: [$_turns]');
     notifyListeners();
   }
 
@@ -46,6 +72,18 @@ class MobProvider extends ChangeNotifier {
 
   set mobbers(List<Mobber> newMobbers) {
     _mobbers = newMobbers;
+    notifyListeners();
+  }
+
+  bool get isTimeForBreak {
+    final secondsUntilBreak = fortyFiveMinutes - _turns * turnLength;
+    return secondsUntilBreak <= 0;
+  }
+
+  void reset() {
+    _turns = 0;
+    _currentMobberIndex = 0;
+    _state = MobState.waiting;
     notifyListeners();
   }
 }

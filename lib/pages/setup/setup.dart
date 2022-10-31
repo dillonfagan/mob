@@ -37,6 +37,7 @@ class _SetupPageState extends State<SetupPage> {
                 child: TextField(
                   controller: mobberController,
                   textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 20),
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     hintText: 'Add a mobber...',

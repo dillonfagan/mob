@@ -1,10 +1,10 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:mob_app/common/log.dart';
+import 'package:mob_app/pages/timer/helpers/ticker.dart';
 import 'package:mob_app/providers/mob.dart';
 import 'package:provider/provider.dart';
 
-import 'widgets/appbar.dart';
+import 'widgets/appbar_factory.dart';
+import 'widgets/break_button.dart';
 import 'widgets/display.dart';
 import 'widgets/next_button.dart';
 
@@ -18,10 +18,7 @@ class TimerPage extends StatefulWidget {
 }
 
 class _TimerPageState extends State<TimerPage> {
-  late int _secondsRemaining;
-  late Timer _timer;
-
-  bool _isCounting = true;
+  late final _ticker = Ticker(onTick: _update);
 
   @override
   void initState() {
@@ -31,35 +28,20 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   void dispose() {
-    _timer.cancel();
+    _ticker.stop();
     super.dispose();
   }
 
-  void _start() {
-    _secondsRemaining = widget.seconds;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      debug('Seconds Remaining: $_secondsRemaining');
-      setState(() {
-        if (_secondsRemaining < 1) {
-          _stop();
-        } else {
-          _secondsRemaining -= 1;
-        }
-      });
-    });
+  void _update() {
+    setState(() {});
+  }
+
+  void _start({int? seconds}) {
+    setState(() => _ticker.start(seconds ?? widget.seconds));
   }
 
   void _stop() {
-    _timer.cancel();
-    setState(() {
-      _secondsRemaining = 0;
-      _isCounting = false;
-    });
-  }
-
-  void _nextMobber() {
-    _start();
-    setState(() => _isCounting = true);
+    setState(() => _ticker.stop());
   }
 
   @override
@@ -67,38 +49,49 @@ class _TimerPageState extends State<TimerPage> {
     final mob = Provider.of<MobProvider>(context);
     final currentMobber = mob.currentMobber;
     final nextMobber = mob.nextMobber;
-    String title = currentMobber.name;
+    String title = mob.isOnBreak ? 'Break' : currentMobber.name;
 
     return Scaffold(
-      appBar: TimerAppBar(context: context),
+      appBar: AppBarFactory.build(context: context, mob: mob),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TimerDisplay(seconds: _secondsRemaining),
+            TimerDisplay(seconds: _ticker.secondsRemaining),
             const SizedBox(height: 16),
-            _isCounting
+            _ticker.isActive
                 ? Text(
                     title,
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 36),
                   )
-                : NextButton(
-                    labelText: nextMobber.name,
-                    onPressed: () {
-                      mob.advanceTurn();
-                      _nextMobber();
-                    },
-                  ),
+                : mob.isTimeForBreak
+                    ? BreakButton(
+                        onPressed: () {
+                          mob.state = MobState.onBreak;
+                          _start(seconds: 600);
+                        },
+                      )
+                    : NextButton(
+                        labelText: nextMobber.name,
+                        onPressed: () {
+                          mob.state = MobState.mobbing;
+                          mob.advanceTurn();
+                          _start();
+                        },
+                      ),
           ],
         ),
       ),
       floatingActionButton: Visibility(
-        visible: _isCounting,
+        visible: _ticker.isActive,
         child: FloatingActionButton(
-          onPressed: _stop,
+          onPressed: () {
+            _stop();
+            mob.state = MobState.waiting;
+          },
           backgroundColor: Colors.amber,
           child: const Icon(
             Icons.skip_next_rounded,
