@@ -21,17 +21,17 @@ class MobProvider extends ChangeNotifier {
 
   set state(MobState value) {
     _state = value;
+    if (value == MobState.onBreak) {
+      _turns = 0;
+      debug('Turns reset');
+    }
+
     debug('State set to [$value]');
   }
 
   int get turns => _turns;
 
   bool get isOnBreak => state == MobState.onBreak;
-
-  void resetTurns() {
-    _turns = 0;
-    debug('Turns reset');
-  }
 
   int get turnLength {
     if (_mobbers.isEmpty) {
@@ -78,5 +78,12 @@ class MobProvider extends ChangeNotifier {
   bool get isTimeForBreak {
     final secondsUntilBreak = fortyFiveMinutes - _turns * turnLength;
     return secondsUntilBreak <= 0;
+  }
+
+  void reset() {
+    _turns = 0;
+    _currentMobberIndex = 0;
+    _state = MobState.waiting;
+    notifyListeners();
   }
 }

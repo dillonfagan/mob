@@ -52,7 +52,7 @@ class _TimerPageState extends State<TimerPage> {
     String title = mob.isOnBreak ? 'Break' : currentMobber.name;
 
     return Scaffold(
-      appBar: TimerAppBar(context: context),
+      appBar: TimerAppBar(context: context, mob: mob),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -71,7 +71,6 @@ class _TimerPageState extends State<TimerPage> {
                     ? BreakButton(
                         onPressed: () {
                           mob.state = MobState.onBreak;
-                          mob.resetTurns();
                           _start(seconds: 600);
                         },
                       )
