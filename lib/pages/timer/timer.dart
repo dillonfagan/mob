@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mob_app/pages/timer/helpers/ticker.dart';
 import 'package:mob_app/providers/mob.dart';
@@ -18,7 +19,10 @@ class TimerPage extends StatefulWidget {
 }
 
 class _TimerPageState extends State<TimerPage> {
-  late final _ticker = Ticker(onTick: _update);
+  late final _ticker = Ticker(
+    onTick: _update,
+    onStop: _playChime,
+  );
 
   @override
   void initState() {
@@ -42,6 +46,10 @@ class _TimerPageState extends State<TimerPage> {
 
   void _stop() {
     setState(() => _ticker.stop());
+  }
+
+  void _playChime() async {
+    await AudioPlayer().play(UrlSource('sounds/chime.wav'));
   }
 
   @override
