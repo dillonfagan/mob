@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:mob_app/common/log.dart';
 
 class Ticker {
-  Ticker({required this.onTick});
+  Ticker({required this.onTick, this.onStop});
 
   final Function() onTick;
+  final Function()? onStop;
 
   late Timer _timer;
   late int _secondsRemaining;
@@ -20,6 +21,7 @@ class Ticker {
       debug('Seconds Remaining: $_secondsRemaining');
       if (_secondsRemaining < 1) {
         stop();
+        onStop?.call();
       } else {
         _secondsRemaining -= 1;
       }
