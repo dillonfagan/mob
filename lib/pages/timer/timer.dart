@@ -3,7 +3,7 @@ import 'package:mob_app/pages/timer/helpers/ticker.dart';
 import 'package:mob_app/providers/mob.dart';
 import 'package:provider/provider.dart';
 
-import 'widgets/appbar.dart';
+import 'widgets/appbar_factory.dart';
 import 'widgets/break_button.dart';
 import 'widgets/display.dart';
 import 'widgets/next_button.dart';
@@ -52,7 +52,7 @@ class _TimerPageState extends State<TimerPage> {
     String title = mob.isOnBreak ? 'Break' : currentMobber.name;
 
     return Scaffold(
-      appBar: TimerAppBar(context: context, mob: mob),
+      appBar: AppBarFactory.build(context: context, mob: mob),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
