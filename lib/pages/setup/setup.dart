@@ -7,6 +7,7 @@ import 'package:mob_app/providers/mob.dart';
 import 'package:provider/provider.dart';
 
 import 'widgets/mobber_field.dart';
+import 'widgets/mobbers_listview.dart';
 
 class SetupPage extends StatefulWidget {
   const SetupPage({super.key});
@@ -46,27 +47,12 @@ class _SetupPageState extends State<SetupPage> {
                   },
                 ),
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: mobbers.length,
-                  itemBuilder: ((context, index) {
-                    return Card(
-                      child: ListTile(
-                        title: Text(
-                          mobbers[index].name,
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                        trailing: IconButton(
-                          onPressed: () {
-                            mobbers.removeAt(index);
-                            mob.mobbers = mobbers;
-                          },
-                          icon: const Icon(Icons.close_rounded),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
+              MobbersListView(
+                mobbers: mobbers,
+                onMobberRemoved: (index) {
+                  mobbers.removeAt(index);
+                  mob.mobbers = mobbers;
+                },
               ),
             ],
           ),
