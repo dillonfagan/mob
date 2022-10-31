@@ -6,6 +6,8 @@ import 'package:mob_app/pages/timer/timer.dart';
 import 'package:mob_app/providers/mob.dart';
 import 'package:provider/provider.dart';
 
+import 'widgets/mobber_field.dart';
+
 class SetupPage extends StatefulWidget {
   const SetupPage({super.key});
 
@@ -34,14 +36,8 @@ class _SetupPageState extends State<SetupPage> {
           child: Column(
             children: [
               Card(
-                child: TextField(
+                child: MobberField(
                   controller: mobberController,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 20),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Add a mobber...',
-                  ),
                   onSubmitted: (value) {
                     if (value.isEmpty) return;
                     mobberController.clear();
