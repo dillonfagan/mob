@@ -14,7 +14,7 @@ class AppBarFactory {
       leading: IconButton(
         onPressed: () {
           mob.reset();
-          showDialog<bool>(
+          showDialog(
             context: context,
             builder: (context) {
               return EndMobAlertDialog(
