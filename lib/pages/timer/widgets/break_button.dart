@@ -19,7 +19,7 @@ class BreakButton extends StatelessWidget {
       label: const Padding(
         padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
         child: Text(
-          'Take a Break',
+          'Break',
           style: TextStyle(fontSize: 36),
         ),
       ),
