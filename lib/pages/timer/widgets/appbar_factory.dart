@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mob_app/pages/setup/setup.dart';
+import 'package:mob_app/pages/timer/widgets/end_mob_alert.dart';
 import 'package:mob_app/providers/mob.dart';
 
 class AppBarFactory {
@@ -13,9 +14,19 @@ class AppBarFactory {
       leading: IconButton(
         onPressed: () {
           mob.reset();
-          Navigator.of(context).pop(MaterialPageRoute(
-            builder: (_) => const SetupPage(),
-          ));
+          showDialog<bool>(
+            context: context,
+            builder: (context) {
+              return EndMobAlertDialog(
+                onConfirm: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(MaterialPageRoute(
+                    builder: (_) => const SetupPage(),
+                  ));
+                },
+              );
+            },
+          );
         },
         icon: const Icon(Icons.close_rounded),
       ),
