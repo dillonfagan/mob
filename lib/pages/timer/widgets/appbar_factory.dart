@@ -13,7 +13,7 @@ class AppBarFactory {
       leading: IconButton(
         onPressed: () {
           mob.reset();
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
+          Navigator.of(context).pop(MaterialPageRoute(
             builder: (_) => const SetupPage(),
           ));
         },

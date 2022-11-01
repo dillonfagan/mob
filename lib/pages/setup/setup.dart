@@ -28,6 +28,19 @@ class _SetupPageState extends State<SetupPage> {
     final turnLength = mob.turnLength;
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: mobbers.length > 1
+            ? IconButton(
+                onPressed: () {
+                  mob.shuffleMobbers();
+                },
+                icon: const Icon(Icons.rotate_left_rounded),
+                tooltip: 'Shuffle mobbers',
+              )
+            : null,
+      ),
       body: Center(
         child: Container(
           constraints: BoxConstraints(
