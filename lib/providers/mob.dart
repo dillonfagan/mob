@@ -15,6 +15,11 @@ class MobProvider extends ChangeNotifier {
   int _currentMobberIndex = 0;
   int _turns = 0;
 
+  void shuffleMobbers() {
+    _mobbers.shuffle();
+    notifyListeners();
+  }
+
   MobState _state = MobState.waiting;
 
   MobState get state => _state;
