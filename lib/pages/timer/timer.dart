@@ -60,7 +60,7 @@ class _TimerPageState extends State<TimerPage> {
     String title = mob.isOnBreak ? 'Break' : currentMobber.name;
 
     return Scaffold(
-      appBar: AppBarFactory.build(context: context, mob: mob),
+      appBar: AppBarFactory.build(context: context),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
