@@ -29,6 +29,7 @@ class EndMobAlertDialog extends StatelessWidget {
           ),
         ),
       ],
+      actionsPadding: const EdgeInsets.all(16),
     );
   }
 }
