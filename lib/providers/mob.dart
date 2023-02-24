@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mob_app/common/log.dart';
 import 'package:mob_app/models/mobber.dart';
 
@@ -39,6 +39,10 @@ class MobProvider extends ChangeNotifier {
   bool get isOnBreak => state == MobState.onBreak;
 
   int get turnLength {
+    if (kDebugMode) {
+      return 2;
+    }
+
     if (_mobbers.isEmpty) {
       return 0;
     }
