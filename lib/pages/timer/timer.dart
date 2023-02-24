@@ -10,9 +10,10 @@ import 'widgets/display.dart';
 import 'widgets/next_button.dart';
 
 class TimerPage extends StatefulWidget {
-  const TimerPage({super.key, this.seconds = 5});
+  TimerPage({super.key, this.seconds = 5});
 
   final int seconds;
+  final AudioPlayer audioPlayer = AudioPlayer(playerId: '#timer');
 
   @override
   State<TimerPage> createState() => _TimerPageState();
@@ -49,7 +50,10 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   void _playChime() async {
-    await AudioPlayer().play(UrlSource('sounds/chime.wav'));
+    await widget.audioPlayer.play(
+      AssetSource('sounds/chime.wav'),
+      volume: 1.0,
+    );
   }
 
   @override
