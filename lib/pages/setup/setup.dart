@@ -1,29 +1,29 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mob_app/models/mobber.dart';
 import 'package:mob_app/pages/timer/timer.dart';
 import 'package:mob_app/providers/mob.dart';
-import 'package:provider/provider.dart';
 
 import 'widgets/mobber_field.dart';
 import 'widgets/mobbers_listview.dart';
 
-class SetupPage extends StatefulWidget {
+class SetupPage extends ConsumerStatefulWidget {
   const SetupPage({super.key});
 
   @override
-  State<StatefulWidget> createState() {
+  ConsumerState<ConsumerStatefulWidget> createState() {
     return _SetupPageState();
   }
 }
 
-class _SetupPageState extends State<SetupPage> {
+class _SetupPageState extends ConsumerState<SetupPage> {
   final mobberController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    final mob = Provider.of<MobProvider>(context);
+    final mob = ref.watch(mobProvider);
     final mobbers = mob.mobbers;
     final turnLength = mob.turnLength;
 

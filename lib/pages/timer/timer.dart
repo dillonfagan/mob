@@ -1,25 +1,25 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mob_app/pages/timer/helpers/ticker.dart';
 import 'package:mob_app/providers/mob.dart';
-import 'package:provider/provider.dart';
 
 import 'widgets/appbar_factory.dart';
 import 'widgets/break_button.dart';
 import 'widgets/display.dart';
 import 'widgets/next_button.dart';
 
-class TimerPage extends StatefulWidget {
+class TimerPage extends ConsumerStatefulWidget {
   TimerPage({super.key, this.seconds = 5});
 
   final int seconds;
   final AudioPlayer audioPlayer = AudioPlayer(playerId: '#timer');
 
   @override
-  State<TimerPage> createState() => _TimerPageState();
+  ConsumerState<TimerPage> createState() => _TimerPageState();
 }
 
-class _TimerPageState extends State<TimerPage> {
+class _TimerPageState extends ConsumerState<TimerPage> {
   late final _ticker = Ticker(
     onTick: _update,
     onStop: _playChime,
@@ -58,13 +58,13 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final mob = Provider.of<MobProvider>(context);
+    final mob = ref.watch(mobProvider);
     final currentMobber = mob.currentMobber;
     final nextMobber = mob.nextMobber;
     String title = mob.isOnBreak ? 'Break' : currentMobber.name;
 
     return Scaffold(
-      appBar: AppBarFactory.build(context: context),
+      appBar: AppBarFactory.build(context: context, mob: mob),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,

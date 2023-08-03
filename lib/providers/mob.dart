@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mob_app/common/log.dart';
 import 'package:mob_app/models/mobber.dart';
 
@@ -96,3 +97,7 @@ class MobProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+final mobProvider = ChangeNotifierProvider<MobProvider>((ref) {
+  return MobProvider();
+});
