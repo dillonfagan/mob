@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mob_app/pages/timer/helpers/ticker.dart';
 import 'package:mob_app/providers/break_provider.dart';
 import 'package:mob_app/providers/driver_provider.dart';
-import 'package:mob_app/providers/mob.dart';
+import 'package:mob_app/providers/mob_controller_provider.dart';
 import 'package:mob_app/providers/mob_state_provider.dart';
 import 'package:mob_app/providers/turn_length_provider.dart';
 

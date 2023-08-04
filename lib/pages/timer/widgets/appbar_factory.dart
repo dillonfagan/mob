@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mob_app/pages/setup/setup.dart';
 import 'package:mob_app/pages/timer/widgets/end_mob_alert.dart';
-import 'package:mob_app/providers/mob.dart';
+import 'package:mob_app/providers/mob_controller_provider.dart';
 
 class AppBarFactory {
   static AppBar build({
