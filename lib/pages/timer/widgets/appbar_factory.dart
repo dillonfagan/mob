@@ -6,14 +6,14 @@ import 'package:mob_app/providers/mob.dart';
 class AppBarFactory {
   static AppBar build({
     required BuildContext context,
-    required MobProvider mob,
+    required MobController controller,
   }) {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
         onPressed: () {
-          mob.reset();
+          controller.reset();
           showDialog(
             context: context,
             builder: (context) {

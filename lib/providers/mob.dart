@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mob_app/common/log.dart';
-import 'package:mob_app/models/mobber.dart';
+import 'package:mob_app/providers/driver_provider.dart';
+import 'package:mob_app/providers/mob_state_provider.dart';
+import 'package:mob_app/providers/turns_provider.dart';
 
 const int fortyFiveMinutes = 2700;
 
@@ -11,93 +11,16 @@ enum MobState {
   onBreak,
 }
 
-class MobProvider extends ChangeNotifier {
-  List<Mobber> _mobbers = [];
-  int _currentMobberIndex = 0;
-  int _turns = 0;
+class MobController {
+  const MobController(this.ref);
 
-  void shuffleMobbers() {
-    _mobbers.shuffle();
-    notifyListeners();
-  }
-
-  MobState _state = MobState.waiting;
-
-  MobState get state => _state;
-
-  set state(MobState value) {
-    _state = value;
-    if (value == MobState.onBreak) {
-      _turns = 0;
-      debug('Turns reset');
-    }
-
-    debug('State set to [$value]');
-  }
-
-  int get turns => _turns;
-
-  bool get isOnBreak => state == MobState.onBreak;
-
-  int get turnLength {
-    if (kDebugMode) {
-      return 2;
-    }
-
-    if (_mobbers.isEmpty) {
-      return 0;
-    }
-
-    if (_mobbers.length == 1) {
-      return 900;
-    }
-
-    if (_mobbers.length < 4) {
-      return 480;
-    }
-
-    return 420;
-  }
-
-  Mobber get currentMobber => _mobbers[_currentMobberIndex];
-
-  Mobber get nextMobber => _mobbers[_nextMobberIndex];
-
-  List<Mobber> get mobbers => _mobbers;
-
-  void advanceTurn() {
-    _turns++;
-    _currentMobberIndex = _nextMobberIndex;
-    debug('Turns: [$_turns]');
-    notifyListeners();
-  }
-
-  int get _nextMobberIndex {
-    if (_currentMobberIndex == _mobbers.length - 1) {
-      return 0;
-    }
-
-    return _currentMobberIndex + 1;
-  }
-
-  set mobbers(List<Mobber> newMobbers) {
-    _mobbers = newMobbers;
-    notifyListeners();
-  }
-
-  bool get isTimeForBreak {
-    final secondsUntilBreak = fortyFiveMinutes - _turns * turnLength;
-    return secondsUntilBreak <= 0;
-  }
+  final Ref ref;
 
   void reset() {
-    _turns = 0;
-    _currentMobberIndex = 0;
-    _state = MobState.waiting;
-    notifyListeners();
+    ref.read(turnsProvider.notifier).reset();
+    ref.read(driverIndexProvider.notifier).reset();
+    ref.read(mobStateProvider.notifier).update(MobState.waiting);
   }
 }
 
-final mobProvider = ChangeNotifierProvider<MobProvider>((ref) {
-  return MobProvider();
-});
+final mobControllerProvider = Provider(MobController.new);

@@ -2,7 +2,11 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mob_app/pages/timer/helpers/ticker.dart';
+import 'package:mob_app/providers/break_provider.dart';
+import 'package:mob_app/providers/driver_provider.dart';
 import 'package:mob_app/providers/mob.dart';
+import 'package:mob_app/providers/mob_state_provider.dart';
+import 'package:mob_app/providers/turn_length_provider.dart';
 
 import 'widgets/appbar_factory.dart';
 import 'widgets/break_button.dart';
@@ -10,9 +14,8 @@ import 'widgets/display.dart';
 import 'widgets/next_button.dart';
 
 class TimerPage extends ConsumerStatefulWidget {
-  TimerPage({super.key, this.seconds = 5});
+  TimerPage({super.key});
 
-  final int seconds;
   final AudioPlayer audioPlayer = AudioPlayer(playerId: '#timer');
 
   @override
@@ -42,7 +45,7 @@ class _TimerPageState extends ConsumerState<TimerPage> {
   }
 
   void _start({int? seconds}) {
-    setState(() => _ticker.start(seconds ?? widget.seconds));
+    setState(() => _ticker.start(seconds ?? ref.read(turnLengthProvider)));
   }
 
   void _stop() {
@@ -58,13 +61,17 @@ class _TimerPageState extends ConsumerState<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
-    final mob = ref.watch(mobProvider);
-    final currentMobber = mob.currentMobber;
-    final nextMobber = mob.nextMobber;
-    String title = mob.isOnBreak ? 'Break' : currentMobber.name;
+    final timeToBreak = ref.watch(breakProvider);
+    final mobState = ref.watch(mobStateProvider);
+    final driver = ref.watch(driverProvider);
+    final navigator = ref.watch(navigatorProvider);
+    String title = mobState == MobState.onBreak ? 'Break' : driver.name;
 
     return Scaffold(
-      appBar: AppBarFactory.build(context: context, mob: mob),
+      appBar: AppBarFactory.build(
+        context: context,
+        controller: ref.read(mobControllerProvider),
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -79,18 +86,22 @@ class _TimerPageState extends ConsumerState<TimerPage> {
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 36),
                   )
-                : mob.isTimeForBreak
+                : timeToBreak
                     ? BreakButton(
                         onPressed: () {
-                          mob.state = MobState.onBreak;
+                          ref
+                              .read(mobStateProvider.notifier)
+                              .update(MobState.onBreak);
                           _start(seconds: 600);
                         },
                       )
                     : NextButton(
-                        labelText: nextMobber.name,
+                        labelText: navigator.name,
                         onPressed: () {
-                          mob.state = MobState.mobbing;
-                          mob.advanceTurn();
+                          ref
+                              .read(mobStateProvider.notifier)
+                              .update(MobState.mobbing);
+                          ref.read(driverIndexProvider.notifier).next();
                           _start();
                         },
                       ),
@@ -102,7 +113,7 @@ class _TimerPageState extends ConsumerState<TimerPage> {
         child: FloatingActionButton(
           onPressed: () {
             _stop();
-            mob.state = MobState.waiting;
+            ref.read(mobStateProvider.notifier).update(MobState.waiting);
           },
           backgroundColor: Colors.amber,
           child: const Icon(
