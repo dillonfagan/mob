@@ -19,6 +19,7 @@ class SetupPage extends ConsumerStatefulWidget {
 }
 
 class _SetupPageState extends ConsumerState<SetupPage> {
+  final focusNode = FocusNode();
   final mobberController = TextEditingController();
 
   Mobbers get mobbersNotifier => ref.read(mobbersProvider.notifier);
@@ -52,10 +53,12 @@ class _SetupPageState extends ConsumerState<SetupPage> {
               Card(
                 child: MobberField(
                   controller: mobberController,
+                  focusNode: focusNode,
                   onSubmitted: (value) {
                     if (value.isEmpty) return;
                     mobberController.clear();
                     mobbersNotifier.add(Mobber(name: value));
+                    focusNode.requestFocus();
                   },
                 ),
               ),
