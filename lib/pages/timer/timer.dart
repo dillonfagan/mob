@@ -54,7 +54,7 @@ class _TimerPageState extends ConsumerState<TimerPage> {
 
   void _playAlarm() async {
     await widget.audioPlayer.play(
-      UrlSource('/sounds/alarm.mp3'),
+      UrlSource('sounds/alarm.mp3'),
       volume: 1.0,
     );
   }
