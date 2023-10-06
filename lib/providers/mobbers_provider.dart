@@ -20,6 +20,11 @@ class Mobbers extends Notifier<List<Mobber>> {
   }
 
   void shuffle() {
+    if (state.length == 2) {
+      state = [state[1], state[0]];
+      return;
+    }
+
     final temp = state;
     temp.shuffle();
 
