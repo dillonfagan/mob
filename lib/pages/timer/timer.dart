@@ -25,7 +25,7 @@ class TimerPage extends ConsumerStatefulWidget {
 class _TimerPageState extends ConsumerState<TimerPage> {
   late final _ticker = Ticker(
     onTick: _update,
-    onStop: _playChime,
+    onStop: _playAlarm,
   );
 
   @override
@@ -52,9 +52,9 @@ class _TimerPageState extends ConsumerState<TimerPage> {
     setState(() => _ticker.stop());
   }
 
-  void _playChime() async {
+  void _playAlarm() async {
     await widget.audioPlayer.play(
-      AssetSource('sounds/chime.wav'),
+      UrlSource('/sounds/alarm.mp3'),
       volume: 1.0,
     );
   }
