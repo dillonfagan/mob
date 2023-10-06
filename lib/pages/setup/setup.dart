@@ -1,31 +1,32 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mob_app/models/mobber.dart';
 import 'package:mob_app/pages/timer/timer.dart';
-import 'package:mob_app/providers/mob.dart';
-import 'package:provider/provider.dart';
+import 'package:mob_app/providers/mobbers_provider.dart';
 
 import 'widgets/mobber_field.dart';
 import 'widgets/mobbers_listview.dart';
 
-class SetupPage extends StatefulWidget {
+class SetupPage extends ConsumerStatefulWidget {
   const SetupPage({super.key});
 
   @override
-  State<StatefulWidget> createState() {
+  ConsumerState<ConsumerStatefulWidget> createState() {
     return _SetupPageState();
   }
 }
 
-class _SetupPageState extends State<SetupPage> {
+class _SetupPageState extends ConsumerState<SetupPage> {
+  final focusNode = FocusNode();
   final mobberController = TextEditingController();
+
+  Mobbers get mobbersNotifier => ref.read(mobbersProvider.notifier);
 
   @override
   Widget build(BuildContext context) {
-    final mob = Provider.of<MobProvider>(context);
-    final mobbers = mob.mobbers;
-    final turnLength = mob.turnLength;
+    final mobbers = ref.watch(mobbersProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +35,7 @@ class _SetupPageState extends State<SetupPage> {
         leading: mobbers.length > 1
             ? IconButton(
                 onPressed: () {
-                  mob.shuffleMobbers();
+                  mobbersNotifier.shuffle();
                 },
                 icon: const Icon(Icons.rotate_left_rounded),
                 tooltip: 'Shuffle mobbers',
@@ -52,19 +53,19 @@ class _SetupPageState extends State<SetupPage> {
               Card(
                 child: MobberField(
                   controller: mobberController,
+                  focusNode: focusNode,
                   onSubmitted: (value) {
                     if (value.isEmpty) return;
                     mobberController.clear();
-                    mobbers.add(Mobber(name: value));
-                    mob.mobbers = mobbers;
+                    mobbersNotifier.add(Mobber(name: value));
+                    focusNode.requestFocus();
                   },
                 ),
               ),
               MobbersListView(
                 mobbers: mobbers,
                 onMobberRemoved: (index) {
-                  mobbers.removeAt(index);
-                  mob.mobbers = mobbers;
+                  mobbersNotifier.removeAt(index);
                 },
               ),
             ],
@@ -76,7 +77,7 @@ class _SetupPageState extends State<SetupPage> {
         child: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: ((context) => TimerPage(seconds: turnLength)),
+              builder: ((context) => TimerPage()),
             ));
           },
           backgroundColor: Colors.amber,

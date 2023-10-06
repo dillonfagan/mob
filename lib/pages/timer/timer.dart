@@ -1,28 +1,31 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mob_app/pages/timer/helpers/ticker.dart';
-import 'package:mob_app/providers/mob.dart';
-import 'package:provider/provider.dart';
+import 'package:mob_app/providers/break_provider.dart';
+import 'package:mob_app/providers/driver_provider.dart';
+import 'package:mob_app/providers/mob_controller_provider.dart';
+import 'package:mob_app/providers/mob_state_provider.dart';
+import 'package:mob_app/providers/turn_length_provider.dart';
 
 import 'widgets/appbar_factory.dart';
 import 'widgets/break_button.dart';
 import 'widgets/display.dart';
 import 'widgets/next_button.dart';
 
-class TimerPage extends StatefulWidget {
-  TimerPage({super.key, this.seconds = 5});
+class TimerPage extends ConsumerStatefulWidget {
+  TimerPage({super.key});
 
-  final int seconds;
   final AudioPlayer audioPlayer = AudioPlayer(playerId: '#timer');
 
   @override
-  State<TimerPage> createState() => _TimerPageState();
+  ConsumerState<TimerPage> createState() => _TimerPageState();
 }
 
-class _TimerPageState extends State<TimerPage> {
+class _TimerPageState extends ConsumerState<TimerPage> {
   late final _ticker = Ticker(
     onTick: _update,
-    onStop: _playChime,
+    onStop: _playAlarm,
   );
 
   @override
@@ -42,29 +45,33 @@ class _TimerPageState extends State<TimerPage> {
   }
 
   void _start({int? seconds}) {
-    setState(() => _ticker.start(seconds ?? widget.seconds));
+    setState(() => _ticker.start(seconds ?? ref.read(turnLengthProvider)));
   }
 
   void _stop() {
     setState(() => _ticker.stop());
   }
 
-  void _playChime() async {
+  void _playAlarm() async {
     await widget.audioPlayer.play(
-      AssetSource('sounds/chime.wav'),
+      UrlSource('/sounds/alarm.mp3'),
       volume: 1.0,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final mob = Provider.of<MobProvider>(context);
-    final currentMobber = mob.currentMobber;
-    final nextMobber = mob.nextMobber;
-    String title = mob.isOnBreak ? 'Break' : currentMobber.name;
+    final timeToBreak = ref.watch(breakProvider);
+    final mobState = ref.watch(mobStateProvider);
+    final driver = ref.watch(driverProvider);
+    final navigator = ref.watch(navigatorProvider);
+    String title = mobState == MobState.onBreak ? 'Break' : driver.name;
 
     return Scaffold(
-      appBar: AppBarFactory.build(context: context),
+      appBar: AppBarFactory.build(
+        context: context,
+        controller: ref.read(mobControllerProvider),
+      ),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -79,18 +86,22 @@ class _TimerPageState extends State<TimerPage> {
                     textAlign: TextAlign.center,
                     style: const TextStyle(fontSize: 36),
                   )
-                : mob.isTimeForBreak
+                : timeToBreak
                     ? BreakButton(
                         onPressed: () {
-                          mob.state = MobState.onBreak;
+                          ref
+                              .read(mobStateProvider.notifier)
+                              .update(MobState.onBreak);
                           _start(seconds: 600);
                         },
                       )
                     : NextButton(
-                        labelText: nextMobber.name,
+                        labelText: navigator.name,
                         onPressed: () {
-                          mob.state = MobState.mobbing;
-                          mob.advanceTurn();
+                          ref
+                              .read(mobStateProvider.notifier)
+                              .update(MobState.mobbing);
+                          ref.read(driverIndexProvider.notifier).next();
                           _start();
                         },
                       ),
@@ -102,7 +113,7 @@ class _TimerPageState extends State<TimerPage> {
         child: FloatingActionButton(
           onPressed: () {
             _stop();
-            mob.state = MobState.waiting;
+            ref.read(mobStateProvider.notifier).update(MobState.waiting);
           },
           backgroundColor: Colors.amber,
           child: const Icon(
