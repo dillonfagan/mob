@@ -4,7 +4,7 @@ import 'package:mob_app/providers/mob_controller_provider.dart';
 class MobStateNotifier extends Notifier<MobState> {
   @override
   MobState build() {
-    return MobState.waiting;
+    return MobState.initialLoad;
   }
 
   void update(MobState newState) {

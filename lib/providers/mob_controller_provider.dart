@@ -6,8 +6,10 @@ import 'package:mob_app/providers/turns_provider.dart';
 const int fortyFiveMinutes = 2700;
 
 enum MobState {
+  initialLoad,
   mobbing,
   waiting,
+  timeToBreak,
   onBreak,
 }
 
@@ -17,7 +19,7 @@ class MobController {
   final Ref ref;
 
   void reset() {
-    ref.read(turnsProvider.notifier).reset();
+    ref.read(turnsProvider.notifier).state = 0;
     ref.read(driverIndexProvider.notifier).reset();
     ref.read(mobStateProvider.notifier).update(MobState.waiting);
   }
