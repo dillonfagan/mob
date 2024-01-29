@@ -72,7 +72,6 @@ class _TimerPageState extends ConsumerState<TimerPage> {
               controller.skipTurn();
             }
           },
-          backgroundColor: Colors.amber,
           child: const Icon(
             Icons.skip_next_rounded,
             size: 36,
