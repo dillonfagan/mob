@@ -1,12 +1,12 @@
-import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mob_app/common/alarm.dart';
 import 'package:mob_app/providers/driver_provider.dart';
 import 'package:mob_app/providers/mob_state_provider.dart';
 import 'package:mob_app/providers/timer_provider.dart';
 import 'package:mob_app/providers/turns_provider.dart';
 
 import 'break_provider.dart';
+import 'turn_length_provider.dart';
 
 const int fortyFiveMinutes = 2700;
 
@@ -23,17 +23,23 @@ class MobController {
 
   final Ref ref;
 
-  final AudioPlayer audioPlayer = AudioPlayer(playerId: '#timer');
+  final _alarm = Alarm();
 
-  void _playAlarm() async {
-    if (kDebugMode) {
-      return;
-    }
+  void start() {
+    ref.read(mobStateProvider.notifier).update(MobState.mobbing);
+    ref.read(timerProvider.notifier).state = ref.read(turnLengthProvider);
+    resume();
+  }
 
-    await audioPlayer.play(
-      UrlSource('sounds/alarm.mp3'),
-      volume: 1.0,
-    );
+  void startNextTurn() {
+    ref.read(driverIndexProvider.notifier).next();
+    start();
+  }
+
+  void startBreak() {
+    ref.read(mobStateProvider.notifier).update(MobState.onBreak);
+    ref.read(timerProvider.notifier).state = 600;
+    resume();
   }
 
   void pause() {
@@ -42,7 +48,7 @@ class MobController {
 
   void resume() {
     ref.read(newTimerProvider.notifier).state = getTimer(ref, () {
-      _playAlarm();
+      _alarm.play();
       endTurn();
     });
   }
