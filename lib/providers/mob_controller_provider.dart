@@ -25,6 +25,13 @@ class MobController {
 
   final _alarm = Alarm();
 
+  bool get isTurnSkipppable {
+    final state = ref.read(mobStateProvider);
+    return state == MobState.mobbing ||
+        state == MobState.onBreak ||
+        state == MobState.waiting;
+  }
+
   void start() {
     ref.read(mobStateProvider.notifier).update(MobState.mobbing);
     ref.read(timerProvider.notifier).state = ref.read(turnLengthProvider);
@@ -40,6 +47,10 @@ class MobController {
     ref.read(mobStateProvider.notifier).update(MobState.onBreak);
     ref.read(timerProvider.notifier).state = 600;
     resume();
+  }
+
+  void skipTurn() {
+    ref.read(driverIndexProvider.notifier).next();
   }
 
   void pause() {

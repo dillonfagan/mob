@@ -63,9 +63,15 @@ class _TimerPageState extends ConsumerState<TimerPage> {
         ),
       ),
       floatingActionButton: Visibility(
-        visible: ref.watch(newTimerProvider).isActive,
+        visible: controller.isTurnSkipppable,
         child: FloatingActionButton(
-          onPressed: () => controller.endTurn(),
+          onPressed: () {
+            if (mobState == MobState.mobbing) {
+              controller.endTurn();
+            } else {
+              controller.skipTurn();
+            }
+          },
           backgroundColor: Colors.amber,
           child: const Icon(
             Icons.skip_next_rounded,
