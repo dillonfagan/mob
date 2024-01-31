@@ -25,7 +25,7 @@ class MobController {
 
   final _alarm = Alarm();
 
-  bool get isTurnSkipppable {
+  bool get isTurnSkippable {
     final state = ref.read(mobStateProvider);
     return state == MobState.mobbing ||
         state == MobState.onBreak ||
@@ -34,7 +34,7 @@ class MobController {
 
   void start() {
     ref.read(mobStateProvider.notifier).update(MobState.mobbing);
-    ref.read(timerProvider.notifier).state = ref.read(turnLengthProvider);
+    ref.read(secondsProvider.notifier).state = ref.read(turnLengthProvider);
     resume();
   }
 
@@ -45,7 +45,7 @@ class MobController {
 
   void startBreak() {
     ref.read(mobStateProvider.notifier).update(MobState.onBreak);
-    ref.read(timerProvider.notifier).state = 600;
+    ref.read(secondsProvider.notifier).state = 600;
     resume();
   }
 
@@ -54,18 +54,18 @@ class MobController {
   }
 
   void pause() {
-    ref.read(newTimerProvider).cancel();
+    ref.read(timerProvider).cancel();
   }
 
   void resume() {
-    ref.read(newTimerProvider.notifier).state = getTimer(ref, () {
+    ref.read(timerProvider.notifier).state = getTimer(ref, () {
       _alarm.play();
       endTurn();
     });
   }
 
   void endTurn() {
-    ref.read(newTimerProvider).cancel();
+    ref.read(timerProvider).cancel();
 
     if (ref.read(mobStateProvider) == MobState.onBreak) {
       reset();

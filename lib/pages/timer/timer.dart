@@ -10,16 +10,11 @@ import 'widgets/break_button.dart';
 import 'widgets/display.dart';
 import 'widgets/next_button.dart';
 
-class TimerPage extends ConsumerStatefulWidget {
+class TimerPage extends ConsumerWidget {
   const TimerPage({super.key});
 
   @override
-  ConsumerState<TimerPage> createState() => _TimerPageState();
-}
-
-class _TimerPageState extends ConsumerState<TimerPage> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final controller = ref.read(mobControllerProvider);
     final mobState = ref.watch(mobStateProvider);
     final driver = ref.watch(driverProvider);
@@ -38,7 +33,7 @@ class _TimerPageState extends ConsumerState<TimerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TimerDisplay(seconds: ref.watch(timerProvider)),
+            TimerDisplay(seconds: ref.watch(secondsProvider)),
             const SizedBox(height: 16),
             if (mobState == MobState.initialLoad)
               StartButton(
@@ -63,13 +58,13 @@ class _TimerPageState extends ConsumerState<TimerPage> {
         ),
       ),
       floatingActionButton: Visibility(
-        visible: controller.isTurnSkipppable,
+        visible: controller.isTurnSkippable,
         child: FloatingActionButton(
           onPressed: () {
-            if (mobState == MobState.mobbing) {
-              controller.endTurn();
-            } else {
+            if (mobState == MobState.waiting) {
               controller.skipTurn();
+            } else {
+              controller.endTurn();
             }
           },
           child: const Icon(
