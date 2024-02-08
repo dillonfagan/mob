@@ -13,12 +13,19 @@ class AppBarFactory {
       elevation: 0,
       leading: IconButton(
         onPressed: () {
-          controller.reset();
+          controller.pause();
+
           showDialog(
             context: context,
             builder: (context) {
               return EndMobAlertDialog(
+                onCancel: () {
+                  Navigator.of(context).pop();
+                  controller.resume();
+                },
                 onConfirm: () {
+                  controller.reset();
+
                   Navigator.of(context).pop();
                   Navigator.of(context).pop(MaterialPageRoute(
                     builder: (_) => const SetupPage(),

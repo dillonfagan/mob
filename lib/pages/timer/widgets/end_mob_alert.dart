@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 class EndMobAlertDialog extends StatelessWidget {
-  const EndMobAlertDialog({super.key, required this.onConfirm});
+  const EndMobAlertDialog({
+    super.key,
+    required this.onCancel,
+    required this.onConfirm,
+  });
 
+  final Function() onCancel;
   final Function() onConfirm;
 
   @override
@@ -14,7 +19,7 @@ class EndMobAlertDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: onCancel,
           style: TextButton.styleFrom(foregroundColor: Colors.grey.shade200),
           child: const Text(
             'Cancel',
