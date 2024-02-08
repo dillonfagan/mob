@@ -58,6 +58,10 @@ class MobController {
   }
 
   void resume() {
+    if (ref.read(mobStateProvider) == MobState.initialLoad) {
+      return;
+    }
+
     ref.read(timerProvider.notifier).state = getTimer(ref, () {
       _alarm.play();
       endTurn();

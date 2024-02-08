@@ -14,11 +14,12 @@ Timer getTimer(Ref ref, Function() onStop) {
   return Timer.periodic(
     const Duration(seconds: 1),
     (timer) {
-      ref.read(secondsProvider.notifier).state -= 1;
-
-      if (ref.read(secondsProvider) == 0) {
+      if (ref.read(secondsProvider) <= 0) {
         onStop();
+        return;
       }
+
+      ref.read(secondsProvider.notifier).state -= 1;
     },
   );
 }
