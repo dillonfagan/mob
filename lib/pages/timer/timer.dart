@@ -1,76 +1,31 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mob_app/pages/timer/helpers/ticker.dart';
-import 'package:mob_app/providers/break_provider.dart';
 import 'package:mob_app/providers/driver_provider.dart';
 import 'package:mob_app/providers/mob_controller_provider.dart';
 import 'package:mob_app/providers/mob_state_provider.dart';
-import 'package:mob_app/providers/turn_length_provider.dart';
+import 'package:mob_app/providers/timer_provider.dart';
 
 import 'widgets/appbar_factory.dart';
 import 'widgets/break_button.dart';
 import 'widgets/display.dart';
 import 'widgets/next_button.dart';
 
-class TimerPage extends ConsumerStatefulWidget {
-  TimerPage({super.key});
-
-  final AudioPlayer audioPlayer = AudioPlayer(playerId: '#timer');
+class TimerPage extends ConsumerWidget {
+  const TimerPage({super.key});
 
   @override
-  ConsumerState<TimerPage> createState() => _TimerPageState();
-}
-
-class _TimerPageState extends ConsumerState<TimerPage> {
-  late final _ticker = Ticker(
-    onTick: _update,
-    onStop: _playAlarm,
-  );
-
-  @override
-  void initState() {
-    super.initState();
-    _start();
-  }
-
-  @override
-  void dispose() {
-    _ticker.stop();
-    super.dispose();
-  }
-
-  void _update() {
-    setState(() {});
-  }
-
-  void _start({int? seconds}) {
-    setState(() => _ticker.start(seconds ?? ref.read(turnLengthProvider)));
-  }
-
-  void _stop() {
-    setState(() => _ticker.stop());
-  }
-
-  void _playAlarm() async {
-    await widget.audioPlayer.play(
-      UrlSource('sounds/alarm.mp3'),
-      volume: 1.0,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final timeToBreak = ref.watch(breakProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final controller = ref.read(mobControllerProvider);
     final mobState = ref.watch(mobStateProvider);
     final driver = ref.watch(driverProvider);
     final navigator = ref.watch(navigatorProvider);
+
     String title = mobState == MobState.onBreak ? 'Break' : driver.name;
 
     return Scaffold(
       appBar: AppBarFactory.build(
         context: context,
-        controller: ref.read(mobControllerProvider),
+        controller: controller,
       ),
       body: Center(
         child: Column(
@@ -78,44 +33,40 @@ class _TimerPageState extends ConsumerState<TimerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            TimerDisplay(seconds: _ticker.secondsRemaining),
+            TimerDisplay(seconds: ref.watch(secondsProvider)),
             const SizedBox(height: 16),
-            _ticker.isActive
-                ? Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 36),
-                  )
-                : timeToBreak
-                    ? BreakButton(
-                        onPressed: () {
-                          ref
-                              .read(mobStateProvider.notifier)
-                              .update(MobState.onBreak);
-                          _start(seconds: 600);
-                        },
-                      )
-                    : NextButton(
-                        labelText: navigator.name,
-                        onPressed: () {
-                          ref
-                              .read(mobStateProvider.notifier)
-                              .update(MobState.mobbing);
-                          ref.read(driverIndexProvider.notifier).next();
-                          _start();
-                        },
-                      ),
+            if (mobState == MobState.initialLoad)
+              StartButton(
+                onPressed: () => controller.start(),
+              ),
+            if (mobState == MobState.mobbing || mobState == MobState.onBreak)
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 36),
+              ),
+            if (mobState == MobState.timeToBreak)
+              BreakButton(
+                onPressed: () => controller.startBreak(),
+              ),
+            if (mobState == MobState.waiting)
+              NextButton(
+                labelText: navigator.name,
+                onPressed: () => controller.startNextTurn(),
+              ),
           ],
         ),
       ),
       floatingActionButton: Visibility(
-        visible: _ticker.isActive,
+        visible: controller.isTurnSkippable,
         child: FloatingActionButton(
           onPressed: () {
-            _stop();
-            ref.read(mobStateProvider.notifier).update(MobState.waiting);
+            if (mobState == MobState.waiting) {
+              controller.skipTurn();
+            } else {
+              controller.endTurn();
+            }
           },
-          backgroundColor: Colors.amber,
           child: const Icon(
             Icons.skip_next_rounded,
             size: 36,
