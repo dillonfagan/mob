@@ -77,7 +77,7 @@ class _SetupPageState extends ConsumerState<SetupPage> {
         child: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: ((context) => TimerPage()),
+              builder: ((context) => const TimerPage()),
             ));
           },
           backgroundColor: Colors.amber,
